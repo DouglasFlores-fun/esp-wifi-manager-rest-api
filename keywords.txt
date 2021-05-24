@@ -1,0 +1,12 @@
+WifiSetup   KEYWORD1
+wifiSetupServerMode LITERAL1
+wifiSetupClientMode LITERAL1
+wifiSetupNotMode    LITERAL1
+begin   KEYWORD2
+startServer   KEYWORD2
+stopServer   KEYWORD2
+startWifiClient   KEYWORD2
+checkWifi   KEYWORD2
+stopWifi   KEYWORD2
+loop   KEYWORD2
+checkMode   KEYWORD2
