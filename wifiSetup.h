@@ -10,7 +10,7 @@
 //#include <WiFi.h>
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-//#include "AsyncJson.h"
+#include "AsyncJson.h"
 #include "ArduinoJson.h"
 #include <EEPROM.h>
 
@@ -65,8 +65,10 @@ class WifiSetupServer {
         void scanStatus(AsyncWebServerRequest *request);
         void showNetworks(AsyncWebServerRequest *request);
         void changeWifiMode(AsyncWebServerRequest *request);
-        void updateWifi(AsyncWebServerRequest *request);
-        void updateServer(AsyncWebServerRequest *request);
+        //void updateWifi(AsyncWebServerRequest *request);
+        void updateWifi(AsyncWebServerRequest *request, JsonVariant &json);
+        //void updateServer(AsyncWebServerRequest *request);
+        void updateServer(AsyncWebServerRequest *request, JsonVariant &json);
         void notFound(AsyncWebServerRequest *request);
         void onBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
         void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);

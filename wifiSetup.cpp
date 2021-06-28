@@ -6,11 +6,11 @@
 //#include <WiFi.h>
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-//#include "AsyncJson.h"
+#include "AsyncJson.h"
 #include "ArduinoJson.h"
 #include <EEPROM.h>
 
-#include "wifiSetup.h"
+#include <wifiSetup.h>
 
 
 
@@ -146,19 +146,28 @@ bool WifiSetupServer::setupDefaultRoutes(){
   server.on("/end", HTTP_GET, [this](AsyncWebServerRequest *request){
 	  changeWifiMode(request);
    });
-  server.on("/updateWifi", HTTP_POST, [this](AsyncWebServerRequest *request){
+  /*server.on("/updateWifi", HTTP_POST, [this](AsyncWebServerRequest *request){
 	  updateWifi(request);
-  });
-  server.on("/updateServer", HTTP_POST, [this](AsyncWebServerRequest *request){
+  });*/
+  /*server.on("/updateServer", HTTP_POST, [this](AsyncWebServerRequest *request){
 	  updateServer(request);
-   });
+   });*/
   server.onNotFound( [this](AsyncWebServerRequest *request){
 	  notFound(request);
   });
+
+  AsyncCallbackJsonWebHandler* handlerUpdateWifi = new AsyncCallbackJsonWebHandler("/updateWifi", [this](AsyncWebServerRequest *request, JsonVariant& json) {
+			updateWifi(request, json);
+    });
+  AsyncCallbackJsonWebHandler* handlerUpdateServer = new AsyncCallbackJsonWebHandler("/updateServer", [this](AsyncWebServerRequest *request, JsonVariant& json) {
+			updateServer(request, json);
+    });
   //server.onFileUpload(onUpload);
   //server.onRequestBody(onBody);
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, HEAD, OPTIONS");
+  server.addHandler(handlerUpdateWifi);
+  server.addHandler(handlerUpdateServer);
   server.begin();
 }
 
@@ -238,7 +247,7 @@ void WifiSetupServer::showNetworks(AsyncWebServerRequest *request){
     request->send(200, "application/json", response);
 }
 
-void WifiSetupServer::updateWifi(AsyncWebServerRequest *request){
+/*void WifiSetupServer::updateWifi(AsyncWebServerRequest *request){
   StaticJsonDocument<100> data;
     if ((request->hasParam("ssid", true)) && (request->hasParam("pass", true))){
         _myEeprom.clearSSID();
@@ -254,14 +263,49 @@ void WifiSetupServer::updateWifi(AsyncWebServerRequest *request){
     }else{
       request->send(404, "application/json", "{\"error\":\"Invalid request\"}");
     }
+}*/
+
+void WifiSetupServer::updateWifi(AsyncWebServerRequest *request, JsonVariant &json){
+  JsonObject bodyData = json.as<JsonObject>();
+  StaticJsonDocument<100> data;
+    if(bodyData.containsKey("ssid") && bodyData.containsKey("pass")){
+        _myEeprom.clearSSID();
+        _myEeprom.clearPass();
+        _myEeprom.updateSSID(bodyData["ssid"].as<String>());
+        _myEeprom.updatePass(bodyData["pass"].as<String>());
+        EEPROM.commit();
+        data["ssid"] = _myEeprom.getSSID();
+        data["pass"] = _myEeprom.getPass();
+        String response;
+        serializeJson(data, response);
+        request->send(200, "application/json", response);
+    }else{
+      request->send(404, "application/json", "{\"error\":\"Invalid request\"}");
+    }
 }
 
 
-void WifiSetupServer::updateServer(AsyncWebServerRequest *request){
+/*void WifiSetupServer::updateServer(AsyncWebServerRequest *request){
   StaticJsonDocument<100> data;
     if (request->hasParam("server", true)) {
         _myEeprom.clearServer();
         _myEeprom.updateServer(request->getParam("server",true)->value());
+        EEPROM.commit();
+        data["server"] = String(_myEeprom.getServer(0))+"."+String(_myEeprom.getServer(1))+"."+String(_myEeprom.getServer(2))+"."+String(_myEeprom.getServer(3));
+        String response;
+        serializeJson(data, response);
+        request->send(200, "application/json", response);
+    }else{
+      request->send(404, "application/json", "{\"error\":\"Invalid request\"}");
+    }
+}*/
+
+void WifiSetupServer::updateServer(AsyncWebServerRequest *request, JsonVariant &json){
+  JsonObject bodyData = json.as<JsonObject>();
+  StaticJsonDocument<100> data;
+    if (bodyData.containsKey("server")) {
+        _myEeprom.clearServer();
+        _myEeprom.updateServer(bodyData["server"].as<String>());
         EEPROM.commit();
         data["server"] = String(_myEeprom.getServer(0))+"."+String(_myEeprom.getServer(1))+"."+String(_myEeprom.getServer(2))+"."+String(_myEeprom.getServer(3));
         String response;
