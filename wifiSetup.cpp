@@ -1,11 +1,18 @@
 #include <Arduino.h>
 #include <inttypes.h>
 #include <stdio.h>
+
+#if defined(ESP8266)
 #include <ESP8266WiFi.h>
+#include <ESPAsyncTCP.h> //https://github.com/me-no-dev/ESPAsyncTCP
+#elif defined(ESP32)
+#include <WiFi.h>
+#include <AsyncTCP.h> //https://github.com/me-no-dev/AsyncTCP
+#endif
+
+
 #include <WiFiClient.h> 
-//#include <WiFi.h>
-#include <ESPAsyncTCP.h>
-#include <ESPAsyncWebServer.h>
+#include <ESPAsyncWebServer.h> // https://github.com/me-no-dev/ESPAsyncWebServer
 #include "AsyncJson.h"
 #include "ArduinoJson.h"
 #include <EEPROM.h>
@@ -324,27 +331,27 @@ String WifiSetupServer::readableEncryptionType(uint8_t encType)
   
   switch(encType)
   {
-    case ENC_TYPE_TKIP:
+    case wifiSetup_ENC_TYPE_TKIP:
     {
       encTypeAsString = "WPA";
       break;
     }
-    case ENC_TYPE_WEP:
+    case wifiSetup_ENC_TYPE_WEP:
     {
       encTypeAsString = "WEP";
       break;
     }
-    case ENC_TYPE_CCMP:
+    case wifiSetup_ENC_TYPE_CCMP:
     {
       encTypeAsString = "WPA2";
       break;
     }
-    case ENC_TYPE_NONE:
+    case wifiSetup_ENC_TYPE_NONE:
     {
       encTypeAsString = "None";
       break;
     }
-    case ENC_TYPE_AUTO:
+    case wifiSetup_ENC_TYPE_AUTO:
     {
       encTypeAsString = "Auto";
       break;

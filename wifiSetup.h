@@ -2,21 +2,36 @@
 #ifndef WIFISETUP_H_
 #define WIFISETUP_H_
 
+
+
 #include <Arduino.h>
 #include <inttypes.h>
 #include <stdio.h>
-#include <ESP8266WiFi.h>
+
+#if defined(ESP8266)
+    #include <ESP8266WiFi.h>
+    #include <ESPAsyncTCP.h> //https://github.com/me-no-dev/ESPAsyncTCP
+#elif defined(ESP32)
+    #include <WiFi.h>
+    #include <AsyncTCP.h> //https://github.com/me-no-dev/AsyncTCP
+#endif
+
+
 #include <WiFiClient.h> 
-//#include <WiFi.h>
-#include <ESPAsyncTCP.h>
-#include <ESPAsyncWebServer.h>
+#include <ESPAsyncWebServer.h> // https://github.com/me-no-dev/ESPAsyncWebServer
 #include "AsyncJson.h"
-#include "ArduinoJson.h"
+#include "ArduinoJson.h" //https://arduinojson.org/
 #include <EEPROM.h>
 
 #define wifiSetupServerMode 0
 #define wifiSetupClientMode 1
 #define wifiSetupNotMode 3
+
+#define wifiSetup_ENC_TYPE_TKIP 2
+#define wifiSetup_ENC_TYPE_WEP 5
+#define wifiSetup_ENC_TYPE_CCMP 4
+#define wifiSetup_ENC_TYPE_NONE 7
+#define wifiSetup_ENC_TYPE_AUTO 8
 
 class WifiSetupEeprom {
     private:
