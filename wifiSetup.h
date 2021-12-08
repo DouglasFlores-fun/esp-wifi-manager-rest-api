@@ -136,6 +136,7 @@ class WifiSetup{
 		WifiSetup();
 		~WifiSetup();
 		bool begin(void (*wifiCheck_cb)(bool*, bool*), Stream &serialPort = Serial);
+        void setCredentialsServer(char *appSSID = "UdbDevice", char *appPASS = "MotaAndScada");
 		void startServer();
 		void stopServer();
 		bool startWifiClient();

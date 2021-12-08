@@ -36,6 +36,10 @@ bool WifiSetup::begin(void (*wifiCheck_cb)(bool*, bool*), Stream &serialPort){
 	return startWifiClient();
 }
 
+void WifiSetup::setCredentialsServer(char *appSSID, char *appPASS) {
+    server.setCredentialsServer(appSSID,appPASS);
+}
+
 void WifiSetup::startServer(){
 	server.startWifi();
 }
