@@ -10,13 +10,12 @@
 #include <AsyncTCP.h> //https://github.com/me-no-dev/AsyncTCP
 #endif
 
-
 #include <WiFiClient.h> 
 #include <ESPAsyncWebServer.h> // https://github.com/me-no-dev/ESPAsyncWebServer
 #include "AsyncJson.h"
 #include "ArduinoJson.h"
 #include <EEPROM.h>
-
+//#include <AsyncElegantOTA.h> //https://github.com/ayushsharma82/AsyncElegantOTA  //https://randomnerdtutorials.com/esp32-ota-over-the-air-arduino/  //v2.2.6
 #include <wifiSetup.h>
 
 
@@ -179,6 +178,8 @@ bool WifiSetupServer::setupDefaultRoutes(){
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, HEAD, OPTIONS");
   server.addHandler(handlerUpdateWifi);
   server.addHandler(handlerUpdateServer);
+
+  //AsyncElegantOTA.begin(&server);
   server.begin();
 }
 
